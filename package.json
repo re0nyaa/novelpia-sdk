@@ -48,12 +48,12 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/minjaeryu/novelpia.git"
+        "url": "https://github.com/ren0yaa/novelpia.git"
     },
     "bugs": {
-        "url": "https://github.com/minjaeryu/novelpia/issues"
+        "url": "https://github.com/ren0yaa/novelpia/issues"
     },
-    "homepage": "https://github.com/minjaeryu/novelpia#readme",
+    "homepage": "https://github.com/ren0yaa/novelpia#readme",
     "devDependencies": {
         "@types/jest": "^30.0.0",
         "jest": "^30.3.0",
