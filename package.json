@@ -1,0 +1,70 @@
+{
+    "name": "novelpia",
+    "version": "1.0.1",
+    "description": "Novelpia 비공식 TypeScript API 클라이언트",
+    "type": "module",
+    "main": "./dist/client.js",
+    "types": "./dist/client.d.ts",
+    "module": "./dist/client.js",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./client": {
+            "types": "./dist/client.d.ts",
+            "import": "./dist/client.js"
+        },
+        "./types": {
+            "types": "./dist/types.d.ts",
+            "import": "./dist/types.js"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "test": "jest --config jest.config.cjs",
+        "build": "tsc -p tsconfig.build.json",
+        "example:basic": "tsx examples/01-basic-search.ts",
+        "example:advanced": "tsx examples/02-advanced-search.ts",
+        "example:curation": "tsx examples/03-curation.ts",
+        "example:pagination": "tsx examples/04-pagination.ts",
+        "example:error": "tsx examples/05-error-handling.ts",
+        "prepublishOnly": "npm run build && npm run test"
+    },
+    "keywords": [
+        "novelpia",
+        "novels",
+        "api",
+        "client",
+        "typescript",
+        "korean",
+        "storytelling"
+    ],
+    "author": "novelpia",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/minjaeryu/novelpia.git"
+    },
+    "bugs": {
+        "url": "https://github.com/minjaeryu/novelpia/issues"
+    },
+    "homepage": "https://github.com/minjaeryu/novelpia#readme",
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "jest": "^30.3.0",
+        "ts-jest": "^29.4.9",
+        "tsx": "^4.21.0",
+        "typescript": "^6.0.2"
+    },
+    "dependencies": {
+        "undici": "^8.0.2"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}

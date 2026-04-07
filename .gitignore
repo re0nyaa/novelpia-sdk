@@ -1,0 +1,5 @@
+node_modules
+memo.txt
+coverage
+.DS_Store
+*.tsbuildinfo
