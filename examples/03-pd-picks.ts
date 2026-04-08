@@ -14,7 +14,7 @@ async function main() {
         console.log("📌 PD픽 (편집자 픽) 조회\n")
 
         const curation = await client.getCuration({
-            main_group: 210, // PD픽
+            target: "pd-picks",
             rows: 30,
         })
 

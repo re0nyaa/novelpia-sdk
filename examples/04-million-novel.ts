@@ -14,7 +14,7 @@ async function main() {
         console.log("💎 밀리언 노벨 (Million Novel) 조회\n")
 
         const curation = await client.getCuration({
-            main_group: 59, // 밀리언 노벨
+            target: "million",
             rows: 100,
         })
 

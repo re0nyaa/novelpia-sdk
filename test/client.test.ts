@@ -186,7 +186,7 @@ describe("NovelPiaClient", () => {
             } as any)
 
             const client = new NovelPiaClient()
-            const result = await client.getCuration({ main_group: 59 })
+            const result = await client.getCuration({ target: "million" })
 
             expect(result.status).toBe(200)
             expect(result.conf.idx).toBe(59)
@@ -237,7 +237,7 @@ describe("NovelPiaClient", () => {
 
             const client = new NovelPiaClient()
             const params: CurationParams = {
-                main_group: 59,
+                target: "million",
                 rows: 100,
                 prev_million_flag: true,
             }
@@ -258,7 +258,7 @@ describe("NovelPiaClient", () => {
             const client = new NovelPiaClient()
 
             await expect(
-                client.getCuration({ main_group: 59 }),
+                client.getCuration({ target: "million" }),
             ).rejects.toThrow("Failed to fetch: Internal Server Error")
         })
     })

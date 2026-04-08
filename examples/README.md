@@ -59,7 +59,7 @@ pnpm tsx examples/03-pd-picks.ts
 
 **주요 기능:**
 
-- PD픽 조회 (`main_group=210`)
+- PD픽 조회 (`target: "pd-picks"`)
 - 편집자 추천 작품 표시
 
 ```
@@ -81,7 +81,7 @@ pnpm tsx examples/04-million-novel.ts
 
 **주요 기능:**
 
-- 밀리언 노벨 조회 (`main_group=59`)
+- 밀리언 노벨 조회 (`target: "million"`)
 - 100만 조회 달성 작품 표시
 
 ```
