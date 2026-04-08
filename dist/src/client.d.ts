@@ -11,7 +11,7 @@ export interface SearchParams {
     is_challenge?: 0 | 1;
 }
 export interface CurationParams {
-    main_group: number;
+    target: "million" | "pd-picks";
     rows?: number;
     prev_million_flag?: boolean;
 }
@@ -25,6 +25,7 @@ export declare class NovelPiaClient {
     search(params: SearchParams): Promise<NovelSearchResponse>;
     /**
      * 큐레이션 조회
+     * @param params.target - "million" (100만 조회 명작) 또는 "pd-picks" (편집자 픽)
      */
     getCuration(params: CurationParams): Promise<CurationResponse>;
 }

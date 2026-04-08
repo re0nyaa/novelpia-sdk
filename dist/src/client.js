@@ -1,4 +1,9 @@
 import { fetch } from "undici";
+// Curation 타겟과 main_group 매핑
+const CURATION_GROUP_MAP = {
+    million: 59,
+    "pd-picks": 210,
+};
 const BASE_URL = "https://novelpia.com/proc";
 /** Novelpia API 클라이언트 */
 export class NovelPiaClient {
@@ -36,11 +41,13 @@ export class NovelPiaClient {
     }
     /**
      * 큐레이션 조회
+     * @param params.target - "million" (100만 조회 명작) 또는 "pd-picks" (편집자 픽)
      */
     async getCuration(params) {
+        const mainGroup = CURATION_GROUP_MAP[params.target];
         const searchParams = new URLSearchParams({
             cmd: "million_novel_curation",
-            main_group: String(params.main_group),
+            main_group: String(mainGroup),
             rows: String(params.rows ?? 100),
             _: Date.now().toString(),
         });
