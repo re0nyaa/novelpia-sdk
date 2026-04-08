@@ -1,7 +1,9 @@
 /**
- * 예제 3: 큐레이션 조회
+ * 예제 3: PD픽 조회
  *
- * 실행: ts-node examples/03-curation.ts
+ * PD픽 (편집자 픽) - 편집자들이 엄선한 추천 작품
+ *
+ * 실행: ts-node examples/03-pd-picks.ts
  */
 import { NovelPiaClient } from "../index"
 
@@ -9,12 +11,11 @@ async function main() {
     const client = new NovelPiaClient()
 
     try {
-        console.log("🎬 큐레이션 조회 예제\n")
+        console.log("📌 PD픽 (편집자 픽) 조회\n")
 
-        // 밀리언 노벨 큐레이션
         const curation = await client.getCuration({
-            main_group: 59,
-            rows: 10,
+            main_group: 210, // PD픽
+            rows: 30,
         })
 
         // 큐레이션 제목 출력

@@ -32,7 +32,7 @@ results.list.forEach((novel) => {
 })
 ```
 
-## 📖 사용 예제
+## 사용 예제
 
 ### 소설 검색하기
 

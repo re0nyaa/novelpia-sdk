@@ -1,7 +1,7 @@
 /**
- * 예제 4: 페이지네이션
+ * 예제 5: 페이지네이션
  *
- * 실행: ts-node examples/04-pagination.ts
+ * 실행: ts-node examples/05-pagination.ts
  */
 import { NovelPiaClient } from "../index"
 

@@ -12,7 +12,7 @@ pnpm install
 
 ## 예제 목록
 
-### 1️⃣ 기본 검색 (`01-basic-search.ts`)
+### 기본 검색 (`01-basic-search.ts`)
 
 가장 간단한 검색 예제입니다.
 
@@ -35,7 +35,7 @@ pnpm tsx examples/01-basic-search.ts
    업데이트: 2026-04-07 18:30:00
 ```
 
-### 2️⃣ 고급 검색 (`02-advanced-search.ts`)
+### 고급 검색 (`02-advanced-search.ts`)
 
 정렬 및 필터링을 사용한 검색 예제입니다.
 
@@ -49,32 +49,56 @@ pnpm tsx examples/02-advanced-search.ts
 - 추천순 정렬
 - 최근 업데이트순 정렬
 
-### 3️⃣ 큐레이션 조회 (`03-curation.ts`)
+### PD픽 조회 (`03-pd-picks.ts`)
 
-Novelpia의 큐레이션(추천 작품) 조회 예제입니다.
+편집자들이 엄선한 PD픽(편집자 픽) 조회 예제입니다.
 
 ```bash
-pnpm tsx examples/03-curation.ts
+pnpm tsx examples/03-pd-picks.ts
 ```
 
-**출력:**
+**주요 기능:**
+
+- PD픽 조회 (`main_group=210`)
+- 편집자 추천 작품 표시
 
 ```
-🏆 독자님들이 선택한 명작들!
-📌 100만의 선택! 밀리언 노벨!
+📌 PD픽 (편집자 픽)
+============================================================
 
- 1. 점 좀 봐줬더니 거물들이 집착한다
-    작가: 타락물고기
-    장르: 판타지, 전생, 하렘
-    링크: /novel/411144
+ 1. 소설 제목
+    작가: 작가명
+    장르: 판타지, 전생
 ```
 
-### 4️⃣ 페이지네이션 (`04-pagination.ts`)
+### 밀리언 노벨 조회 (`04-million-novel.ts`)
+
+100만 조회를 달성한 독자들이 선택한 명작 조회 예제입니다.
+
+```bash
+pnpm tsx examples/04-million-novel.ts
+```
+
+**주요 기능:**
+
+- 밀리언 노벨 조회 (`main_group=59`)
+- 100만 조회 달성 작품 표시
+
+```
+ 밀리언 노벨 (Million Novel)
+============================================================
+
+ 1. 명작 소설 제목
+    작가: 작가명
+    장르: 로맨스, 실연
+```
+
+### 페이지네이션 (`05-pagination.ts`)
 
 대량의 검색 결과를 페이지 단위로 조회하는 예제입니다.
 
 ```bash
-pnpm tsx examples/04-pagination.ts
+pnpm tsx examples/05-pagination.ts
 ```
 
 **특징:**
@@ -83,12 +107,12 @@ pnpm tsx examples/04-pagination.ts
 - 페이지 수 계산
 - 마지막 페이지 처리
 
-### 5️⃣ 에러 처리 (`05-error-handling.ts`)
+### 에러 처리 (`06-error-handling.ts`)
 
 안전한 에러 처리와 타입 검증 예제입니다.
 
 ```bash
-pnpm tsx examples/05-error-handling.ts
+pnpm tsx examples/06-error-handling.ts
 ```
 
 **주요 내용:**
@@ -274,4 +298,4 @@ for (let page = 1; page <= 10; page++) {
 
 ---
 
-**Happy coding! 🚀**
+**Happy coding! **

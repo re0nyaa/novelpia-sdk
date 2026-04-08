@@ -1,7 +1,7 @@
 /**
- * 예제 5: 에러 처리 및 타입 안정성
+ * 예제 6: 에러 처리 및 타입 안정성
  *
- * 실행: ts-node examples/05-error-handling.ts
+ * 실행: ts-node examples/06-error-handling.ts
  */
 import { NovelPiaClient, type NovelSearchResponse } from "../index"
 
