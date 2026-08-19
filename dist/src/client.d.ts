@@ -1,4 +1,5 @@
-import type { NovelSearchResponse, CurationResponse } from "./types";
+import { type CacheStore } from "./cache";
+import type { CurationResponse, ErrorInterceptor, NovelPiaClientOptions, NovelSearch, NovelSearchResponse, PaginationOptions, RequestInterceptor, RequestOptions, ResponseInterceptor, RetryInterceptor } from "./types";
 export interface SearchParams {
     page?: number;
     rows?: number;
@@ -15,17 +16,32 @@ export interface CurationParams {
     rows?: number;
     prev_million_flag?: boolean;
 }
-/** Novelpia API 클라이언트 */
 export declare class NovelPiaClient {
-    private baseUrl;
-    constructor(baseUrl?: string);
-    /**
-     * 소설 검색
-     */
-    search(params: SearchParams): Promise<NovelSearchResponse>;
-    /**
-     * 큐레이션 조회
-     * @param params.target - "million" (100만 조회 명작) 또는 "pd-picks" (편집자 픽)
-     */
-    getCuration(params: CurationParams): Promise<CurationResponse>;
+    private readonly baseUrl;
+    private readonly timeoutMs;
+    private readonly maxRetries;
+    private readonly retryBaseDelayMs;
+    private readonly retryMaxDelayMs;
+    private readonly defaultHeaders;
+    private readonly customFetch;
+    private readonly cacheStore?;
+    private readonly cacheTtlMs;
+    private readonly logger?;
+    private readonly requestInterceptors;
+    private readonly responseInterceptors;
+    private readonly errorInterceptors;
+    private readonly retryInterceptors;
+    constructor(baseUrlOrOptions?: string | NovelPiaClientOptions);
+    addRequestInterceptor(interceptor: RequestInterceptor): this;
+    addResponseInterceptor(interceptor: ResponseInterceptor): this;
+    addErrorInterceptor(interceptor: ErrorInterceptor): this;
+    addRetryInterceptor(interceptor: RetryInterceptor): this;
+    getCache(): CacheStore | undefined;
+    clearCache(): Promise<void>;
+    search(params: SearchParams, options?: RequestOptions): Promise<NovelSearchResponse>;
+    getCuration(params: CurationParams, options?: RequestOptions): Promise<CurationResponse>;
+    paginateSearch(params: SearchParams, options?: RequestOptions & PaginationOptions): AsyncIterableIterator<NovelSearchResponse>;
+    iterateSearch(params: SearchParams, options?: RequestOptions & PaginationOptions): AsyncIterableIterator<NovelSearch>;
+    private request;
 }
+export default NovelPiaClient;

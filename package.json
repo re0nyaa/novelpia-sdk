@@ -3,9 +3,9 @@
     "version": "1.0.134",
     "description": "Novelpia 비공식 TypeScript API 클라이언트",
     "type": "module",
-    "main": "./dist/client.js",
-    "types": "./dist/client.d.ts",
-    "module": "./dist/client.js",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "module": "./dist/index.js",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -13,14 +13,29 @@
             "require": "./dist/index.js"
         },
         "./client": {
-            "types": "./dist/client.d.ts",
-            "import": "./dist/client.js",
-            "require": "./dist/client.js"
+            "types": "./dist/src/client.d.ts",
+            "import": "./dist/src/client.js",
+            "require": "./dist/src/client.js"
         },
         "./types": {
-            "types": "./dist/types.d.ts",
-            "import": "./dist/types.js",
-            "require": "./dist/types.js"
+            "types": "./dist/src/types.d.ts",
+            "import": "./dist/src/types.js",
+            "require": "./dist/src/types.js"
+        },
+        "./errors": {
+            "types": "./dist/src/errors.d.ts",
+            "import": "./dist/src/errors.js",
+            "require": "./dist/src/errors.js"
+        },
+        "./cache": {
+            "types": "./dist/src/cache.d.ts",
+            "import": "./dist/src/cache.js",
+            "require": "./dist/src/cache.js"
+        },
+        "./retry": {
+            "types": "./dist/src/retry.d.ts",
+            "import": "./dist/src/retry.js",
+            "require": "./dist/src/retry.js"
         }
     },
     "files": [

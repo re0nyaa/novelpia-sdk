@@ -131,3 +131,22 @@ describe("Types - CurationResponse", () => {
         expect(response.conf.sub_title).toContain("선택")
     })
 })
+
+describe("Types - Enterprise Options", () => {
+    it("should validate NovelPiaClientOptions typing", () => {
+        const options: import("../src/types").NovelPiaClientOptions = {
+            baseUrl: "https://novelpia.com/proc",
+            timeout: 5000,
+            maxRetries: 3,
+            cache: true,
+            cacheTtlMs: 30000,
+            headers: {
+                "User-Agent": "CustomAgent/1.0",
+            },
+        }
+
+        expect(options.timeout).toBe(5000)
+        expect(options.maxRetries).toBe(3)
+    })
+})
+

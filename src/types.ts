@@ -1,4 +1,3 @@
-/** 소설 검색 응답의 소설 항목 */
 export interface NovelSearch {
     novel_no: number
     novel_name: string
@@ -50,7 +49,6 @@ export interface NovelSearch {
     is_challenge: number
 }
 
-/** 소설 검색 API 응답 */
 export interface NovelSearchResponse {
     status: number
     code: string
@@ -62,7 +60,6 @@ export interface NovelSearchResponse {
     block_not_live_cnt: number
 }
 
-/** 큐레이션 소설 항목 */
 export interface CurationNovel {
     novel_name: string
     novel_no: string
@@ -78,7 +75,6 @@ export interface CurationNovel {
     novel_free: string
 }
 
-/** 큐레이션 설정 */
 export interface CurationConfig {
     idx: number
     sub_title: string
@@ -92,7 +88,6 @@ export interface CurationConfig {
     icon_url: string
 }
 
-/** 큐레이션 API 응답 */
 export interface CurationResponse {
     status: number
     errmsg: string
@@ -114,3 +109,93 @@ export interface MillionNovel {
     mem_nick: string
     novel_free: string
 }
+
+export interface Logger {
+    debug(message: string, ...args: unknown[]): void
+    info(message: string, ...args: unknown[]): void
+    warn(message: string, ...args: unknown[]): void
+    error(message: string, ...args: unknown[]): void
+}
+
+export interface RequestInterceptorContext {
+    url: string
+    params?: Record<string, unknown>
+    headers: Record<string, string>
+    attempt: number
+    signal?: AbortSignal
+}
+
+export interface ResponseInterceptorContext<T = unknown> {
+    url: string
+    data: T
+    status: number
+    durationMs: number
+    cached?: boolean
+}
+
+export interface ErrorInterceptorContext {
+    url: string
+    error: unknown
+    attempt: number
+}
+
+export interface RetryInterceptorContext {
+    url: string
+    error: unknown
+    attempt: number
+    delayMs: number
+}
+
+export type RequestInterceptor = (
+    context: RequestInterceptorContext,
+) => void | RequestInterceptorContext | Promise<void | RequestInterceptorContext>
+
+export type ResponseInterceptor<T = unknown> = (
+    context: ResponseInterceptorContext<T>,
+) => void | T | Promise<void | T>
+
+export type ErrorInterceptor = (
+    context: ErrorInterceptorContext,
+) => void | Promise<void>
+
+export type RetryInterceptor = (
+    context: RetryInterceptorContext,
+) => void | Promise<void>
+
+export interface ClientInterceptors {
+    onRequest?: RequestInterceptor | RequestInterceptor[]
+    onResponse?: ResponseInterceptor | ResponseInterceptor[]
+    onError?: ErrorInterceptor | ErrorInterceptor[]
+    onRetry?: RetryInterceptor | RetryInterceptor[]
+}
+
+export interface NovelPiaClientOptions {
+    baseUrl?: string
+    timeout?: number
+    maxRetries?: number
+    retryBaseDelayMs?: number
+    retryMaxDelayMs?: number
+    headers?: Record<string, string>
+    fetch?: typeof fetch
+    cache?: boolean | import("./cache").CacheStore
+    cacheTtlMs?: number
+    logger?: Logger
+    interceptors?: ClientInterceptors
+}
+
+export interface RequestOptions {
+    timeout?: number
+    signal?: AbortSignal
+    maxRetries?: number
+    skipCache?: boolean
+    cacheTtlMs?: number
+    headers?: Record<string, string>
+}
+
+export interface PaginationOptions {
+    startPage?: number
+    maxPages?: number
+    pageDelayMs?: number
+}
+
+

@@ -3,6 +3,12 @@ import {
     type SearchParams,
     type CurationParams,
 } from "../src/client"
+import {
+    NovelPiaApiError,
+    NovelPiaRateLimitError,
+    NovelPiaTimeoutError,
+    NovelPiaValidationError,
+} from "../src/errors"
 import type { NovelSearchResponse, CurationResponse } from "../src/types"
 
 // Mock fetch from undici
@@ -25,10 +31,34 @@ describe("NovelPiaClient", () => {
             expect(client).toBeInstanceOf(NovelPiaClient)
         })
 
-        it("should use custom baseUrl when provided", () => {
+        it("should use custom baseUrl string when provided", () => {
             const customUrl = "https://novelpia.com/proc"
             const client = new NovelPiaClient(customUrl)
             expect(client).toBeInstanceOf(NovelPiaClient)
+        })
+
+        it("should support client options object with cache, logger, interceptors", () => {
+            const mockLogger = {
+                debug: jest.fn(),
+                info: jest.fn(),
+                warn: jest.fn(),
+                error: jest.fn(),
+            }
+            const onRequest = jest.fn()
+
+            const client = new NovelPiaClient({
+                baseUrl: "https://api.example.com",
+                timeout: 5000,
+                maxRetries: 2,
+                cache: true,
+                logger: mockLogger,
+                interceptors: {
+                    onRequest,
+                },
+            })
+
+            expect(client).toBeInstanceOf(NovelPiaClient)
+            expect(client.getCache()).toBeDefined()
         })
     })
 
@@ -47,6 +77,7 @@ describe("NovelPiaClient", () => {
 
             mockFetch.mockResolvedValueOnce({
                 ok: true,
+                status: 200,
                 json: async () => mockResponse,
             } as any)
 
@@ -125,6 +156,7 @@ describe("NovelPiaClient", () => {
 
             mockFetch.mockResolvedValueOnce({
                 ok: true,
+                status: 200,
                 json: async () => mockResponse,
             } as any)
 
@@ -146,17 +178,36 @@ describe("NovelPiaClient", () => {
             expect(callUrl).toContain("rows=50")
         })
 
-        it("should throw error when response is not ok", async () => {
+        it("should throw NovelPiaApiError when response is not ok", async () => {
             mockFetch.mockResolvedValueOnce({
                 ok: false,
+                status: 404,
                 statusText: "Not Found",
             } as any)
 
-            const client = new NovelPiaClient()
+            const client = new NovelPiaClient({ maxRetries: 0 })
 
             await expect(
                 client.search({ search_val: "테스트" }),
-            ).rejects.toThrow("Failed to fetch: Not Found")
+            ).rejects.toThrow(NovelPiaApiError)
+        })
+
+        it("should throw NovelPiaApiError when API returns error status in body", async () => {
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                status: 200,
+                json: async () => ({
+                    status: 500,
+                    code: "INTERNAL_ERROR",
+                    errmsg: "서버 내부 처리 오류",
+                }),
+            } as any)
+
+            const client = new NovelPiaClient({ maxRetries: 0 })
+
+            await expect(
+                client.search({ search_val: "테스트" }),
+            ).rejects.toThrow("서버 내부 처리 오류")
         })
     })
 
@@ -182,6 +233,7 @@ describe("NovelPiaClient", () => {
 
             mockFetch.mockResolvedValueOnce({
                 ok: true,
+                status: 200,
                 json: async () => mockResponse,
             } as any)
 
@@ -232,6 +284,7 @@ describe("NovelPiaClient", () => {
 
             mockFetch.mockResolvedValueOnce({
                 ok: true,
+                status: 200,
                 json: async () => mockResponse,
             } as any)
 
@@ -249,17 +302,176 @@ describe("NovelPiaClient", () => {
             expect(callUrl).toContain("prev_million_flag=true")
         })
 
-        it("should throw error when response is not ok", async () => {
-            mockFetch.mockResolvedValueOnce({
-                ok: false,
-                statusText: "Internal Server Error",
+        it("should throw NovelPiaValidationError for invalid target", async () => {
+            const client = new NovelPiaClient()
+            await expect(
+                client.getCuration({ target: "invalid" as any }),
+            ).rejects.toThrow(NovelPiaValidationError)
+        })
+    })
+
+    describe("Caching support", () => {
+        it("should return cached result on second request and avoid network call", async () => {
+            const mockResponse: NovelSearchResponse = {
+                status: 200,
+                code: "",
+                errmsg: "",
+                list: [],
+                total_cnt: 0,
+                block_cnt: 0,
+                block_adult_cnt: 0,
+                block_not_live_cnt: 0,
+            }
+
+            mockFetch.mockResolvedValue({
+                ok: true,
+                status: 200,
+                json: async () => mockResponse,
             } as any)
 
-            const client = new NovelPiaClient()
+            const client = new NovelPiaClient({ cache: true })
+
+            const res1 = await client.search({ search_val: "테스트" })
+            const res2 = await client.search({ search_val: "테스트" })
+
+            expect(res1).toEqual(mockResponse)
+            expect(res2).toEqual(mockResponse)
+            expect(mockFetch).toHaveBeenCalledTimes(1)
+        })
+
+        it("should bypass cache when skipCache option is true", async () => {
+            const mockResponse: NovelSearchResponse = {
+                status: 200,
+                code: "",
+                errmsg: "",
+                list: [],
+                total_cnt: 0,
+                block_cnt: 0,
+                block_adult_cnt: 0,
+                block_not_live_cnt: 0,
+            }
+
+            mockFetch.mockResolvedValue({
+                ok: true,
+                status: 200,
+                json: async () => mockResponse,
+            } as any)
+
+            const client = new NovelPiaClient({ cache: true })
+
+            await client.search({ search_val: "테스트" })
+            await client.search({ search_val: "테스트" }, { skipCache: true })
+
+            expect(mockFetch).toHaveBeenCalledTimes(2)
+        })
+
+        it("should clear cache when clearCache is called", async () => {
+            const mockResponse: NovelSearchResponse = {
+                status: 200,
+                code: "",
+                errmsg: "",
+                list: [],
+                total_cnt: 0,
+                block_cnt: 0,
+                block_adult_cnt: 0,
+                block_not_live_cnt: 0,
+            }
+
+            mockFetch.mockResolvedValue({
+                ok: true,
+                status: 200,
+                json: async () => mockResponse,
+            } as any)
+
+            const client = new NovelPiaClient({ cache: true })
+
+            await client.search({ search_val: "테스트" })
+            await client.clearCache()
+            await client.search({ search_val: "테스트" })
+
+            expect(mockFetch).toHaveBeenCalledTimes(2)
+        })
+    })
+
+    describe("Interceptors", () => {
+        it("should execute request and response interceptors", async () => {
+            const mockResponse: NovelSearchResponse = {
+                status: 200,
+                code: "",
+                errmsg: "",
+                list: [],
+                total_cnt: 10,
+                block_cnt: 0,
+                block_adult_cnt: 0,
+                block_not_live_cnt: 0,
+            }
+
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                status: 200,
+                json: async () => mockResponse,
+            } as any)
+
+            const client = new NovelPiaClient({ maxRetries: 0 })
+            const requestInterceptor = jest.fn()
+            const responseInterceptor = jest.fn()
+
+            client
+                .addRequestInterceptor(requestInterceptor)
+                .addResponseInterceptor(responseInterceptor)
+
+            await client.search({ search_val: "테스트" })
+
+            expect(requestInterceptor).toHaveBeenCalledTimes(1)
+            expect(responseInterceptor).toHaveBeenCalledTimes(1)
+        })
+
+        it("should execute error and retry interceptors on failures", async () => {
+            mockFetch
+                .mockRejectedValueOnce(new Error("fetch failed"))
+                .mockResolvedValueOnce({
+                    ok: true,
+                    status: 200,
+                    json: async () => ({ status: 200, list: [], total_cnt: 0 }),
+                } as any)
+
+            const errorInterceptor = jest.fn()
+            const retryInterceptor = jest.fn()
+
+            const client = new NovelPiaClient({
+                maxRetries: 1,
+                retryBaseDelayMs: 10,
+                retryMaxDelayMs: 20,
+            })
+            client
+                .addErrorInterceptor(errorInterceptor)
+                .addRetryInterceptor(retryInterceptor)
+
+            await client.search({ search_val: "테스트" })
+
+            expect(errorInterceptor).toHaveBeenCalledTimes(1)
+            expect(retryInterceptor).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe("Rate Limit Handling", () => {
+        it("should throw NovelPiaRateLimitError on 429 response", async () => {
+            const mockHeaders = new Map([["Retry-After", "5"]])
+            mockFetch.mockResolvedValue({
+                ok: false,
+                status: 429,
+                statusText: "Too Many Requests",
+                headers: {
+                    get: (key: string) => mockHeaders.get(key) || null,
+                },
+            } as any)
+
+            const client = new NovelPiaClient({ maxRetries: 0 })
 
             await expect(
-                client.getCuration({ target: "million" }),
-            ).rejects.toThrow("Failed to fetch: Internal Server Error")
+                client.search({ search_val: "테스트" }),
+            ).rejects.toThrow(NovelPiaRateLimitError)
         })
     })
 })
+
