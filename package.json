@@ -1,6 +1,6 @@
 {
-    "name": "novelpia",
-    "version": "1.1.0",
+    "name": "novelpia-sdk",
+    "version": "1.1.11",
     "description": "Novelpia 비공식 TypeScript API 클라이언트",
     "type": "module",
     "main": "./dist/index.js",
@@ -55,6 +55,7 @@
     },
     "keywords": [
         "novelpia",
+        "novelpia-sdk",
         "novels",
         "api",
         "client",
@@ -66,12 +67,12 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ren0yaa/novelpia.git"
+        "url": "https://github.com/re0nyaa/novelpia-sdk.git"
     },
     "bugs": {
-        "url": "https://github.com/ren0yaa/novelpia/issues"
+        "url": "https://github.com/re0nyaa/novelpia-sdk/issues"
     },
-    "homepage": "https://github.com/ren0yaa/novelpia#readme",
+    "homepage": "https://github.com/re0nyaa/novelpia-sdk#readme",
     "devDependencies": {
         "@types/jest": "^30.0.0",
         "jest": "^30.3.0",

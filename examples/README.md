@@ -136,7 +136,7 @@ pnpm install
 ### TypeScript 프로젝트
 
 ```typescript
-import { NovelPiaClient } from "novelpia"
+import { NovelPiaClient } from "novelpia-sdk"
 
 const client = new NovelPiaClient()
 const result = await client.search({ search_val: "판타지" })
@@ -145,7 +145,7 @@ const result = await client.search({ search_val: "판타지" })
 ### JavaScript (ES6+) 프로젝트
 
 ```javascript
-const { NovelPiaClient } = require("novelpia")
+const { NovelPiaClient } = require("novelpia-sdk")
 
 const client = new NovelPiaClient()
 const result = await client.search({ search_val: "판타지" })
@@ -185,7 +185,7 @@ import {
     NovelPiaClient,
     type NovelSearchResponse,
     type SearchParams,
-} from "novelpia"
+} from "novelpia-sdk"
 
 const client = new NovelPiaClient()
 

@@ -5,17 +5,21 @@ Novelpia 소설 플랫폼의 API를 TypeScript로 쉽게 사용할 수 있는 �
 ## 설치
 
 ```bash
-npm install novelpia
+npm install novelpia-sdk
 # or
-pnpm add novelpia
+pnpm add novelpia-sdk
 ```
+
+> [!NOTE]
+> 기존 `novelpia` 패키지로 설치하더라도 `novelpia-sdk`와 동일하게 호환됩니다. 최신 기능 및 업데이트를 위해 `novelpia-sdk` 사용을 권장합니다.
+
 
 ## 빠른 시작
 
 ### 기본 사용법
 
 ```typescript
-import { NovelPiaClient } from "novelpia"
+import { NovelPiaClient } from "novelpia-sdk"
 
 // 클라이언트 초기화
 const client = new NovelPiaClient()
@@ -229,7 +233,7 @@ pnpm build
 완벽한 TypeScript 지원과 자동 완성을 제공합니다:
 
 ```typescript
-import { NovelPiaClient, type NovelSearchResponse } from "novelpia"
+import { NovelPiaClient, type NovelSearchResponse } from "novelpia-sdk"
 
 const client = new NovelPiaClient()
 const result: NovelSearchResponse = await client.search({
