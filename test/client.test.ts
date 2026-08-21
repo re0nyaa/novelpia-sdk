@@ -178,6 +178,84 @@ describe("NovelPiaClient", () => {
             expect(callUrl).toContain("rows=50")
         })
 
+        it("should clean \\r\\n in novel_story for search results", async () => {
+            const mockResponse: NovelSearchResponse = {
+                status: 200,
+                code: "",
+                errmsg: "",
+                list: [
+                    {
+                        novel_no: 1,
+                        novel_name: "테스트 소설",
+                        novel_search: "",
+                        novel_subtitle: null,
+                        novel_age: 0,
+                        mem_no: 1,
+                        novel_thumb: "",
+                        novel_img: null,
+                        novel_thumb_all: "",
+                        novel_img_all: "",
+                        novel_count: 0,
+                        novel_status: 1,
+                        novel_type: 1,
+                        novel_genre: "[]",
+                        novel_story:
+                            "첫 번째 줄\r\n두 번째 줄\r\n\r\n세 번째 줄",
+                        novel_weekly: 0,
+                        count_view: 100,
+                        count_good: 50,
+                        count_book: 10,
+                        count_pick: 1,
+                        writer_nick: "작가",
+                        writer_original: "",
+                        isbn: "",
+                        last_viewdate: "2026-04-07",
+                        is_monopoly: 0,
+                        is_complete: 0,
+                        is_donation_refusal: 0,
+                        is_secondary_creation: 0,
+                        is_contest: 0,
+                        start_date: "2026-04-01",
+                        status_date: "2026-04-07",
+                        del_date: null,
+                        complete_date: null,
+                        last_write_date: "2026-04-07",
+                        novel_live: 1,
+                        is_indent: 0,
+                        main_genre: 1,
+                        is_osmu: null,
+                        flag_collect: 0,
+                        flag_img_policy: 0,
+                        flag_translate: 0,
+                        reg_date: "2026-04-01",
+                        update_dt: "2026-04-07",
+                        is_video: 0,
+                        cover_url: "",
+                        writer_mem_no: 1,
+                        novel_genre_arr: [],
+                        is_challenge: 0,
+                    },
+                ],
+                total_cnt: 1,
+                block_cnt: 0,
+                block_adult_cnt: 0,
+                block_not_live_cnt: 0,
+            }
+
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                status: 200,
+                json: async () => mockResponse,
+            } as any)
+
+            const client = new NovelPiaClient()
+            const result = await client.search({ search_val: "테스트" })
+
+            expect(result.list[0].novel_story).toBe(
+                "첫 번째 줄 두 번째 줄 세 번째 줄",
+            )
+        })
+
         it("should throw NovelPiaApiError when response is not ok", async () => {
             mockFetch.mockResolvedValueOnce({
                 ok: false,
@@ -474,4 +552,3 @@ describe("NovelPiaClient", () => {
         })
     })
 })
-
