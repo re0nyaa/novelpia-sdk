@@ -1,6 +1,6 @@
 {
     "name": "novelpia-sdk",
-    "version": "1.1.11",
+    "version": "1.1.13",
     "description": "Novelpia 비공식 TypeScript API 클라이언트",
     "type": "module",
     "main": "./dist/index.js",

@@ -1,5 +1,5 @@
 import { fetch as undiciFetch } from "undici"
-import { MemoryTtlCache, type CacheStore } from "./cache"
+import { MemoryTtlCache, type CacheStore } from "./cache.js"
 import {
     NovelPiaApiError,
     NovelPiaError,
@@ -7,8 +7,8 @@ import {
     NovelPiaRateLimitError,
     NovelPiaTimeoutError,
     NovelPiaValidationError,
-} from "./errors"
-import { withRetry } from "./retry"
+} from "./errors.js"
+import { withRetry } from "./retry.js"
 import type {
     CurationResponse,
     ErrorInterceptor,
@@ -21,7 +21,7 @@ import type {
     RequestOptions,
     ResponseInterceptor,
     RetryInterceptor,
-} from "./types"
+} from "./types.js"
 
 export interface SearchParams {
     page?: number

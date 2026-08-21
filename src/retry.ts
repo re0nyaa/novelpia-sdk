@@ -3,7 +3,7 @@ import {
     NovelPiaNetworkError,
     NovelPiaRateLimitError,
     NovelPiaTimeoutError,
-} from "./errors"
+} from "./errors.js"
 
 export interface RetryOptions {
     maxRetries?: number

@@ -1,8 +1,8 @@
-import { NovelPiaClient } from "./client"
+import { NovelPiaClient } from "./client.js"
 
-export * from "./types"
-export * from "./errors"
-export * from "./cache"
-export * from "./retry"
-export * from "./client"
+export * from "./types.js"
+export * from "./errors.js"
+export * from "./cache.js"
+export * from "./retry.js"
+export * from "./client.js"
 export default NovelPiaClient
