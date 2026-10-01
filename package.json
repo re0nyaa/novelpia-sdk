@@ -1,6 +1,6 @@
 {
     "name": "novelpia-sdk",
-    "version": "1.1.141",
+    "version": "1.1.142",
     "description": "Novelpia 비공식 TypeScript API 클라이언트",
     "type": "module",
     "main": "./dist/index.js",
@@ -64,7 +64,7 @@
         "storytelling"
     ],
     "author": "re0nyaa",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/re0nyaa/novelpia-sdk.git"

@@ -1,246 +1,98 @@
-# Novelpia API Client
+# novelpia-sdk
 
-Novelpia 소설 플랫폼의 API를 TypeScript로 쉽게 사용할 수 있는 클라이언트 라이브러리입니다.
+> 노벨피아(Novelpia) 비공식 고성능 TypeScript API 클라이언트
+
+[![npm version](https://img.shields.io/npm/v/novelpia-sdk.svg)](https://www.npmjs.com/package/novelpia-sdk)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
+별도의 웹 브라우저 없이 노벨피아의 REST 엔드포인트를 호출하여 작품 검색, 큐레이션, 필터링 조회 등을 수행할 수 있는 초경량/고성능 TypeScript SDK입니다.
+
+---
+
+## 특징
+
+- **Undici 기반 고성능 통신**: Keep-Alive 풀링 및 최적화된 HTTP 파이프라이닝
+- **풍부한 검색 필터**: 장르, 정렬, 완결 여부, 챌린지 여부 등 완벽 지원
+- **큐레이션 탐색**: 밀리언 노벨 등 메인 그룹별 추천 목록 조회
+- **완전한 TypeScript 지원**: 엄격한 타입 정의와 친절한 JSDoc 자동 완성
+- **모듈화된 서브패스**: `./client`, `./types`, `./errors`, `./cache`, `./retry` 개별 임포트 가능
+
+---
 
 ## 설치
 
 ```bash
-npm install novelpia-sdk
-# or
 pnpm add novelpia-sdk
+# or
+npm install novelpia-sdk
 ```
 
-> [!NOTE]
-> 기존 `novelpia` 패키지로 설치하더라도 `novelpia-sdk`와 동일하게 호환됩니다. 최신 기능 및 업데이트를 위해 `novelpia-sdk` 사용을 권장합니다.
-
+---
 
 ## 빠른 시작
-
-### 기본 사용법
 
 ```typescript
 import { NovelPiaClient } from "novelpia-sdk"
 
-// 클라이언트 초기화
 const client = new NovelPiaClient()
 
-// 소설 검색
+// 1. 소설 검색
 const results = await client.search({
     search_val: "판타지",
     rows: 20,
+    sort_col: "count_view", // 조회수 순 정렬
+    is_complete: 0,          // 연재중인 작품만
 })
 
 console.log(`총 ${results.total_cnt}개의 소설 발견`)
 results.list.forEach((novel) => {
-    console.log(`- ${novel.novel_name} by ${novel.writer_nick}`)
-})
-```
-
-## 사용 예제
-
-### 소설 검색하기
-
-```typescript
-const client = new NovelPiaClient()
-
-// 기본 검색
-const basicSearch = await client.search({
-    search_val: "안녕",
+    console.log(`- ${novel.novel_name} by ${novel.writer_nick} (조회수: ${novel.count_view})`)
 })
 
-// 상세 검색
-const advancedSearch = await client.search({
-    search_val: "판타지",
-    page: 1,
-    rows: 50,
-    sort_col: "count_view", // 조회수 순
-    novel_genre: "하렘",
-    is_complete: 0, // 연재중인 작품만
-    is_challenge: 0,
-})
-
-// 결과 처리
-console.log(`찾은 소설: ${advancedSearch.total_cnt}개`)
-advancedSearch.list.forEach((novel) => {
-    console.log({
-        id: novel.novel_no,
-        title: novel.novel_name,
-        author: novel.writer_nick,
-        views: novel.count_view,
-        likes: novel.count_good,
-        genres: novel.novel_genre_arr,
-        story: novel.novel_story,
-        lastUpdate: novel.last_write_date,
-    })
-})
-```
-
-### 큐레이션 조회하기
-
-```typescript
-const client = new NovelPiaClient()
-
-// 밀리언 노벨 큐레이션
+// 2. 큐레이션 조회 (예: 밀리언 노벨)
 const curation = await client.getCuration({
     main_group: 59,
-    rows: 100,
+    rows: 50,
 })
-
-console.log(`큐레이션: ${curation.conf.title}`)
-console.log(`${curation.conf.sub_title}`)
-
-curation.list.forEach((novel) => {
-    console.log({
-        title: novel.novel_name,
-        author: novel.writer_nick,
-        genres: novel.novel_genre,
-        link: novel.link_url,
-    })
-})
+console.log(`큐레이션 제목: ${curation.conf.title}`)
 ```
 
-### 페이지네이션
+---
 
-```typescript
-const client = new NovelPiaClient()
+## API 레퍼런스
 
-// 1페이지 (20개씩)
-const page1 = await client.search({
-    search_val: "소설",
-    page: 1,
-    rows: 20,
-})
+### `new NovelPiaClient(baseUrl?)`
 
-// 2페이지
-const page2 = await client.search({
-    search_val: "소설",
-    page: 2,
-    rows: 20,
-})
+| 옵션 / 인자 | 타입 | 기본값 | 설명 |
+|---|---|---|---|
+| `baseUrl` | `string` | `"https://novelpia.com/proc"` | 노벨피아 API 프로세스 기본 URL |
 
-console.log(`전체: ${page1.total_cnt}개`)
-console.log(`필터된: ${page1.block_cnt}개 제외됨`)
-```
+### 주요 메서드
 
-### 에러 처리
+| 메서드 | 반환 타입 | 설명 |
+|---|---|---|
+| `search(params)` | `Promise<NovelSearchResponse>` | 키워드, 장르, 정렬, 연재/완결 필터 검색 |
+| `getCuration(params)` | `Promise<NovelCurationResponse>` | 메인 그룹별 추천 큐레이션 소설 목록 조회 |
 
-```typescript
-const client = new NovelPiaClient()
+---
 
-try {
-    const results = await client.search({
-        search_val: "판타지",
-    })
-    console.log(`찾은 소설: ${results.list.length}개`)
-} catch (error) {
-    console.error("API 요청 실패:", error.message)
-}
-```
+## 주요 파라미터 및 타입
 
-### 커스텀 API URL 사용
+### `SearchParams`
 
-```typescript
-// 다른 주소의 API 서버 사용
-const customClient = new NovelPiaClient("https://custom.api.com/proc")
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| `search_val` | `string` | 검색 키워드 |
+| `page` | `number` | 페이지 번호 (기본값: 1) |
+| `rows` | `number` | 페이지 당 행 수 (기본값: 20) |
+| `search_type` | `string` | 검색 대상 (`'all'`, `'writer'`, `'novel_name'` 등) |
+| `novel_genre` | `string` | 장르 태그 필터 (예: `"판타지"`, `"하렘"`) |
+| `sort_col` | `'last_viewdate' \| 'count_view' \| 'count_good'` | 정렬 기준 (최신순 / 조회순 / 추천순) |
+| `is_complete` | `0 \| 1` | 0: 연재중, 1: 완결작 |
+| `is_challenge` | `0 \| 1` | 챌린지 리그 여부 |
 
-const results = await customClient.search({
-    search_val: "소설",
-})
-```
-
-## 검색 파라미터
-
-### SearchParams
-
-```typescript
-interface SearchParams {
-    page?: number // 페이지 번호 (기본: 1)
-    rows?: number // 행 개수 (기본: 20)
-    search_type?: string // 검색 타입 (기본: 'all')
-    search_val?: string // 검색어
-    novel_type?: string // 소설 타입
-    novel_genre?: string // 장르
-    sort_col?: "last_viewdate" | "count_view" | "count_good" // 정렬
-    is_complete?: 0 | 1 // 완결 여부
-    is_challenge?: 0 | 1 // 챌린지 여부
-}
-```
-
-### CurationParams
-
-```typescript
-interface CurationParams {
-    main_group: number // 그룹 ID
-    rows?: number // 행 개수 (기본: 100)
-    prev_million_flag?: boolean // 이전 밀리언 플래그
-}
-```
-
-## 응답 타입
-
-### 소설 정보 (NovelSearch)
-
-```typescript
-{
-    novel_no: number                 // 소설 번호
-    novel_name: string              // 소설 제목
-    writer_nick: string             // 작가 닉네임
-    novel_story: string             // 소설 설명
-    count_view: number              // 조회수
-    count_good: number              // 추천수
-    count_book: number              // 북마크 수
-    novel_genre_arr: string[]       // 장르 배열
-    cover_url: string               // 커버 이미지 URL
-    last_write_date: string         // 마지막 업데이트 날짜
-    is_complete: number             // 완결 여부
-    // ... 기타 필드
-}
-```
-
-### 검색 응답 (NovelSearchResponse)
-
-```typescript
-{
-    status: number                  // HTTP 상태 코드
-    list: NovelSearch[]            // 소설 목록
-    total_cnt: number              // 전체 개수
-    block_cnt: number              // 차단된 개수
-    block_adult_cnt: number        // 성인 차단 개수
-}
-```
-
-## 테스트
-
-```bash
-# 테스트 실행
-pnpm test
-
-# 커버리지 확인
-pnpm test -- --coverage
-```
-
-## 빌드
-
-```bash
-# TypeScript 컴파일
-pnpm build
-
-# 결과는 dist/ 디렉토리에 생성됨
-```
-
-## 타입 지원
-
-완벽한 TypeScript 지원과 자동 완성을 제공합니다:
-
-```typescript
-import { NovelPiaClient, type NovelSearchResponse } from "novelpia-sdk"
-
-const client = new NovelPiaClient()
-const result: NovelSearchResponse = await client.search({
-    search_val: "판타지",
-})
-```
+---
 
 ## 라이선스
 
-MIT
+[Apache-2.0](./LICENSE)
